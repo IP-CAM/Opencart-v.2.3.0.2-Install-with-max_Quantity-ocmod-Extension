@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>
+		maximum quantity API
+	</name>
+	<version>
+		2.0
+	</version>
+	<author>
+		Mindster
+	</author>
+	<link>
+		https://mindster.com
+	</link>
+	<code>
+		maximum quantity API
+	</code>
+	<!-- ________API________ -->
+	<file path="catalog/controller/rest/cart.php">
+		<operation>
+			<search>
+				<![CDATA[             if (isset($data['option'])) {              ]]>
+			</search>
+			<add position="before">
+				<![CDATA[ 
+
+				$this->load->model('extension/module/maxqty');
+				$maxQuantityValidation = $this->model_extension_module_maxqty->maximumValidation(null, 'add', $quantity, $product_id);
+				if (!$maxQuantityValidation['validation']) {
+					$this->load->language('extension/module/maximumqty');
+					$this->json['error'][] = sprintf($this->language->get('error_max')." Maximum order limit for ". $maxQuantityValidation['product_name']. " is ".$maxQuantityValidation['max_limit'].".");
+            	}
+				
+ 				]]>
+			</add>
+		</operation>
+		<operation>
+			<search>
+				<![CDATA[                             $this->cart->update($post['key'], (int)$post['quantity']);               ]]>
+			</search>
+			<add position="before">
+				<![CDATA[
+
+                $this->load->model('extension/module/maxqty');
+        
+				$maxQuantityValidation = $this->model_extension_module_maxqty->maximumValidation($post['key'], 'update', $post['quantity'], null);
+				if (!$maxQuantityValidation['validation']) {
+                    $this->load->language('extension/module/maximumqty');
+                    $this->json['error'][] = sprintf($this->language->get('error_max')." Maximum order limit for ". $maxQuantityValidation['product_name']. " is ".$maxQuantityValidation['max_limit'].".");
+				    return ;
+				}
+
+				]]>
+			</add>
+		</operation>
+	</file>
+</modification>
