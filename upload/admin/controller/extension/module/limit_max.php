@@ -44,7 +44,6 @@ class ControllerExtensionModuleLimitMax extends Controller {
 		} else {
 			$data['error_warning'] = '';
 		}
-
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
